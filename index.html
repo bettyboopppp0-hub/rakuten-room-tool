@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>楽天ROOM 稼ぎサポーター【完全無料・Gemini版】</title>
+<style>
+  :root{
+    --bg:#ffffff; --panel:#ffffff; --line:#ececf1; --soft:#f7f7fb;
+    --ink:#1f2330; --sub:#6b7280; --accent:#bf0000; --accent2:#ff6b4a;
+    --ok:#16a34a; --warn:#d97706; --radius:16px; --shadow:0 6px 24px rgba(20,20,40,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.7;-webkit-text-size-adjust:100%}
+  a{color:var(--accent)}
+  header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);padding:14px 18px}
+  .wrap{max-width:880px;margin:0 auto;padding:0 16px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}
+  .logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));}
+  .tag{font-size:12px;color:var(--sub);font-weight:600}
+  main{padding:18px 0 80px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+  h2{font-size:16px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+  .num{width:24px;height:24px;border-radius:8px;background:var(--soft);border:1px solid var(--line);
+    display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--accent)}
+  .hint{color:var(--sub);font-size:13px;margin:2px 0 12px}
+  label{font-size:13px;font-weight:700;display:block;margin:10px 0 4px}
+  input,textarea,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;
+    font-size:15px;font-family:inherit;background:#fff;color:var(--ink)}
+  textarea{resize:vertical;min-height:80px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row>*{flex:1;min-width:140px}
+  .btn{appearance:none;border:0;border-radius:12px;padding:12px 16px;font-size:15px;font-weight:800;
+    cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
+    transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn:hover{filter:brightness(1.05)} .btn:active{transform:translateY(1px)}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;filter:grayscale(.3)}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+  .grid{display:grid;grid-template-columns:1fr;gap:10px}
+  .item{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--soft);
+    display:flex;gap:12px;align-items:flex-start;transition:.12s}
+  .item img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line);flex-shrink:0;background:#fff}
+  .item .in{flex:1;min-width:0}
+  .item b{display:block;font-size:14px;line-height:1.45}
+  .item .price{color:var(--accent);font-weight:800;font-size:14px}
+  .item .shop{font-size:12px;color:var(--sub)}
+  .item .acts{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+  .idea{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--soft);cursor:pointer;transition:.12s}
+  .idea:hover{border-color:var(--accent);background:#fff}
+  .idea b{display:block;font-size:14px}
+  .idea span{font-size:13px;color:var(--sub)}
+  .out{white-space:pre-wrap;background:var(--soft);border:1px solid var(--line);border-radius:12px;
+    padding:12px;font-size:14.5px;min-height:20px}
+  .muted{color:var(--sub);font-size:12px}
+  .err{color:#b91c1c;font-size:13px;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:8px 10px}
+  .ok{color:var(--ok);font-size:13px}
+  .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;
+    animation:sp .7s linear infinite;display:inline-block}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  canvas{max-width:100%;border:1px solid var(--line);border-radius:12px;display:block;margin-top:10px}
+  details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--soft);margin-top:10px}
+  summary{cursor:pointer;font-weight:700;font-size:14px}
+  .copybar{display:flex;justify-content:flex-end;margin-top:8px}
+  .step-done{font-size:12px;color:var(--ok);font-weight:700}
+  .plan{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--soft);
+    display:flex;gap:10px;align-items:flex-start;margin-top:8px}
+  .plan input[type=checkbox]{width:22px;height:22px;margin-top:4px;accent-color:var(--accent);flex-shrink:0}
+  .plan .in{flex:1}
+  .plan .day{font-weight:800;font-size:14px;color:var(--accent)}
+  .plan .idea-t{font-size:14px;font-weight:700}
+  .plan .why{font-size:12px;color:var(--sub)}
+  .plan.done{opacity:.5}
+  .plan.done .idea-t{text-decoration:line-through}
+  .footer{text-align:center;color:var(--sub);font-size:12px;margin-top:24px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap brand">
+    <div class="logo"></div>
+    <div>
+      楽天ROOM 稼ぎサポーター
+      <div class="tag">完全無料・Gemini版 ｜ リサーチ → 投稿文 → 画像 → スケジュールをこれ1つで</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- API設定 -->
+  <section class="card" id="setup">
+    <h2><span class="num">🔑</span> はじめに：APIキー設定（無料）</h2>
+    <p class="hint">
+      キーはこの端末（ブラウザ）にのみ保存され、外部に送信されません。<br>
+      ① Gemini APIキー（必須）→ <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio（無料）</a><br>
+      ② 楽天アプリID（任意・あるとリアルタイム売れ筋ランキングが見られる）→ <a href="https://webservice.rakuten.co.jp/" target="_blank" rel="noopener">楽天ウェブサービス（無料登録）</a>
+    </p>
+    <div class="row">
+      <div style="flex:2">
+        <label>Gemini API キー（必須）</label>
+        <input id="apiKey" type="password" placeholder="AIza... を貼り付け" autocomplete="off" />
+      </div>
+      <div>
+        <label>モデル</label>
+        <select id="model">
+          <option value="gemini-2.5-flash">gemini-2.5-flash（推奨・無料枠）</option>
+          <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+          <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite（最速）</option>
+        </select>
+      </div>
+    </div>
+    <label>楽天アプリID（任意）</label>
+    <input id="rakutenId" type="password" placeholder="なくてもOK。あると本物のランキングが取得できます" autocomplete="off" />
+    <div class="row" style="margin-top:12px">
+      <button class="btn" onclick="saveKey()">保存する</button>
+      <button class="btn ghost" onclick="testKey()">接続テスト</button>
+    </div>
+    <div id="keyMsg" class="muted" style="margin-top:8px"></div>
+  </section>
+
+  <!-- URLから全自動 -->
+  <section class="card" style="border:2px solid var(--accent)">
+    <h2><span class="num">⚡</span> URLを貼るだけ・全自動 <span id="d0" class="step-done"></span></h2>
+    <p class="hint">
+      楽天市場アプリで商品ページ →「共有」→「コピー」した文章（商品名＋URL）をここに貼ってボタンを押すだけ。<br>
+      <b>商品の読み取り → 投稿文 → 画像のキャッチコピー</b>まで一気に作ります。
+    </p>
+    <textarea id="shareText" style="min-height:80px" placeholder="ここに貼り付け 例：
+kinokoto 炭 ツリー オブジェ …
+[楽天] #Rakutenichiba
+https://item.rakuten.co.jp/…"></textarea>
+    <button class="btn" id="btnAuto" style="margin-top:10px;width:100%;font-size:16px" onclick="autoCreate()">✨ 全部おまかせで作る（投稿文＋画像）</button>
+    <div class="copybar" style="justify-content:flex-start;margin-top:6px">
+      <button class="btn sm ghost" id="btnShare" onclick="loadShare()">商品の読み取りだけする（キー不要）</button>
+    </div>
+    <div id="shareErr"></div>
+    <div id="shareMsg" class="muted" style="margin-top:6px"></div>
+  </section>
+
+  <!-- プロフィール -->
+  <section class="card">
+    <h2><span class="num">👤</span> あなたのROOMプロフィール</h2>
+    <p class="hint">ここを埋めると、リサーチ・投稿文・スケジュールがあなた専用にチューニングされます。</p>
+    <div class="row">
+      <div><label>属性・キャラ</label><input id="pPersona" value="完ミ育児中の30代ママ。時短・ずぼら・産後ダイエット中。実際に使ってよかった物だけ紹介する" /></div>
+      <div><label>ROOMアカウント名</label><input id="pHandle" value="mimi_room" /></div>
+    </div>
+    <label>ターゲット（誰に買ってほしい？）</label>
+    <input id="pTarget" value="産後太りに悩む30代ママ・育児で時間がなく時短グッズやダイエット食品を探している人" />
+    <label>メインで紹介するジャンル</label>
+    <input id="pGenre" value="ダイエット食品・時短キッチングッズ・ベビー用品・プチプラ美容" />
+    <div class="row">
+      <div>
+        <label>トーン（雰囲気）</label>
+        <select id="pTone">
+          <option>親しみやすく・等身大</option>
+          <option>ためになる・紹介上手</option>
+          <option>熱量高め・推し紹介</option>
+          <option>ゆるくユーモア多め</option>
+        </select>
+      </div>
+      <div>
+        <label>絵文字の量</label>
+        <select id="pEmoji"><option>ほどよく</option><option>多め</option><option>控えめ</option></select>
+      </div>
+    </div>
+    <div class="copybar"><button class="btn sm ghost" onclick="saveProfile()">プロフィールを保存</button></div>
+  </section>
+
+  <!-- STEP1 リサーチ -->
+  <section class="card">
+    <h2><span class="num">1</span> 売れ筋リサーチ <span id="d1" class="step-done"></span></h2>
+    <p class="hint">
+      楽天アプリIDがあれば<b>本物の売れ筋ランキング</b>を取得。なければGeminiが「今の時期に売れやすい狙い目商品」を予想します。<br>
+      気になった商品は「この商品で作る」を押すと、下の投稿文づくりに自動セットされます。
+    </p>
+    <div class="row">
+      <div>
+        <label>ジャンル</label>
+        <select id="rGenre">
+          <option value="0">総合ランキング</option>
+          <option value="100938" selected>ダイエット・健康</option>
+          <option value="100939">美容・コスメ・香水</option>
+          <option value="100227">食品</option>
+          <option value="551167">スイーツ・お菓子</option>
+          <option value="100371">レディースファッション</option>
+          <option value="100533">キッズ・ベビー・マタニティ</option>
+          <option value="558944">キッチン用品・食器・調理器具</option>
+          <option value="100804">インテリア・寝具・収納</option>
+          <option value="215783">日用品雑貨・文房具・手芸</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:flex-end">
+        <button class="btn" id="btnRank" style="width:100%" onclick="doResearch()">売れ筋を調べる</button>
+      </div>
+    </div>
+    <div id="rankErr"></div>
+    <div class="grid" id="rankList" style="margin-top:12px"></div>
+    <p class="muted" style="margin-top:8px">
+      💡 商品はROOMアプリ内の検索から投稿します。「📋 商品名コピー」→ ROOMアプリで貼り付け検索、が最速です。
+    </p>
+  </section>
+
+  <!-- STEP2 投稿文 -->
+  <section class="card">
+    <h2><span class="num">2</span> 投稿文（オリジナルコメント）生成 <span id="d2" class="step-done"></span></h2>
+    <p class="hint">
+      ROOMは<b>オリジナル写真＋オリジナルコメント</b>の投稿がランクアップ（＝報酬率アップ）の条件。
+      コピペ感のない「実際に使った人の言葉」で、買いたくなる投稿文を作ります。
+    </p>
+    <label>商品名</label>
+    <input id="cName" placeholder="例：こんにゃく米 60袋 置き換えダイエット" />
+    <div class="row">
+      <div><label>価格（任意）</label><input id="cPrice" placeholder="例：2,980円 送料無料" /></div>
+      <div>
+        <label>長さ</label>
+        <select id="cLen"><option>標準（読みやすい）</option><option>短め</option><option>しっかり長文</option></select>
+      </div>
+    </div>
+    <label>実際に使った感想・良かった点（任意・書くほど刺さる文になります）</label>
+    <textarea id="cReview" placeholder="例：夜だけ置き換えて2週間で−1.2kg。子どもの残りご飯を食べなくなったのが大きい。味は普通に美味しい"></textarea>
+    <button class="btn" id="btnCap" style="margin-top:12px;width:100%" onclick="genCaption()">投稿文を作る</button>
+    <div id="capErr"></div>
+    <div class="out" id="capOut" style="margin-top:12px">ここに投稿文が出ます。</div>
+    <div class="copybar"><button class="btn sm ghost" onclick="copyText('capOut')">📋 コピー</button></div>
+  </section>
+
+  <!-- STEP3 画像 -->
+  <section class="card">
+    <h2><span class="num">3</span> オリジナル画像作成 <span id="d3" class="step-done"></span></h2>
+    <p class="hint">
+      STEP1で商品を選んでいると、<b>本物の商品画像を素材に</b>AIがおしゃれな正方形写真に仕上げます（Gemini画像生成・無料枠）。
+      自分で撮った写真を仕上げてもらうこともできます。キャッチコピーを載せて「オリジナル写真」として投稿できます。
+    </p>
+    <button class="btn" id="btnAIImg" style="width:100%" onclick="genAIImage()">🖼 AIでオリジナル商品写真を作る</button>
+    <details id="aiImgWrap" style="display:none">
+      <summary>🎨 画像の修正・作り直し</summary>
+      <p class="hint" style="margin:8px 0 4px">画像の指示（プロンプト）を直して「この内容で作り直す」か、「全く別の画像」でゼロから作り直せます。</p>
+      <textarea id="aiPrompt" style="min-height:70px"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="btn sm" id="btnRedraw" onclick="redrawImage()">🔁 この内容で作り直す</button>
+        <button class="btn sm ghost" id="btnDiff" onclick="genDifferentImage()">✨ 全く別の画像を作る</button>
+      </div>
+    </details>
+    <label style="margin-top:12px">または自分で撮った写真を使う</label>
+    <input id="imgFile" type="file" accept="image/*" onchange="loadPhoto(event)" />
+    <div class="muted" id="imgNote" style="margin-top:6px"></div>
+    <div class="row" style="margin-top:6px">
+      <div><label>キャッチコピー（上に大きく）</label><input id="iTitle" oninput="renderImage()" placeholder="例：夜だけ置き換えで−1.2kg" /></div>
+      <div><label>サブ（下に小さく）</label><input id="iSub" oninput="renderImage()" placeholder="例：ずぼらママの正直レビュー" /></div>
+    </div>
+    <div class="row">
+      <div><label>価格バッジ（任意）</label><input id="iPrice" oninput="renderImage()" placeholder="例：2,980円" /></div>
+      <div>
+        <label>デザイン</label>
+        <select id="iTheme" onchange="renderImage()">
+          <option value="white">白フレーム（清潔感）</option>
+          <option value="cream">クリーム（ナチュラル）</option>
+          <option value="red">楽天レッド（目立つ）</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn ghost sm" id="btnCopyAI" style="margin-top:10px" onclick="genImageCopy()">✨ コピーをAIで作る（商品名から）</button>
+    <div id="imgErr"></div>
+    <canvas id="cv" width="1080" height="1080"></canvas>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" onclick="downloadImage()">📥 画像を保存</button>
+    </div>
+    <p class="muted">保存した画像をROOMアプリの投稿画面で「写真を追加」すればオリジナル投稿になります。</p>
+  </section>
+
+  <!-- STEP4 スケジュール -->
+  <section class="card">
+    <h2><span class="num">4</span> 投稿スケジュール管理 <span id="d4" class="step-done"></span></h2>
+    <p class="hint">
+      ROOMは<b>毎日コツコツ投稿</b>が伸びる仕組み。1週間分の「何を・いつ・なぜ」をAIが計画し、
+      チェックリストで管理できます（この端末に保存されます）。
+    </p>
+    <button class="btn" id="btnPlan" style="width:100%" onclick="genPlan()">今週の投稿計画を作る</button>
+    <div id="planErr"></div>
+    <div id="planList" style="margin-top:6px"></div>
+    <div class="copybar" id="planBar" style="display:none">
+      <button class="btn sm ghost" onclick="clearPlan()">計画をリセット</button>
+    </div>
+  </section>
+
+  <div class="footer">
+    完全無料 ・ サーバー不要 ・ データは端末内のみ。<br>
+    商品の投稿は楽天ROOMアプリから行ってください（本ツールは下準備を全部やる係です）。
+  </div>
+</main>
+
+<script>
+// ===== 保存・読み込み =====
+const _mem = {};
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(_){ return (k in _mem)?_mem[k]:null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(_){ _mem[k]=v; } }
+const LS = {
+  get k(){return lsGet('rr_key')||''},   set k(v){lsSet('rr_key',v)},
+  get rid(){return lsGet('rr_rid')||''}, set rid(v){lsSet('rr_rid',v)},
+  get model(){return lsGet('rr_model')||'gemini-2.5-flash'}, set model(v){lsSet('rr_model',v)},
+};
+function loadAll(){
+  apiKey.value = LS.k; rakutenId.value = LS.rid; model.value = LS.model;
+  const p = JSON.parse(lsGet('rr_profile')||'null');
+  if(p){ pPersona.value=p.persona; pHandle.value=p.handle; pTarget.value=p.target;
+         pGenre.value=p.genre; pTone.value=p.tone; pEmoji.value=p.emoji; }
+  loadPlanFromStorage();
+  renderImage();
+}
+function saveKey(){ LS.k=apiKey.value.trim(); LS.rid=rakutenId.value.trim(); LS.model=model.value;
+  keyMsg.innerHTML='<span class="ok">✓ 保存しました</span>'; }
+function saveProfile(){
+  lsSet('rr_profile',JSON.stringify({
+    persona:pPersona.value,handle:pHandle.value,target:pTarget.value,
+    genre:pGenre.value,tone:pTone.value,emoji:pEmoji.value}));
+  toast('プロフィールを保存しました');
+}
+function profileText(){
+  return `【発信者】${pPersona.value}
+【ROOM名】${pHandle.value}
+【ターゲット】${pTarget.value}
+【メインジャンル】${pGenre.value}
+【トーン】${pTone.value} / 絵文字:${pEmoji.value}`;
+}
+
+// ===== 「売れる投稿」共通ルール =====
+const SELL_RULES = `【楽天ROOMで売れる投稿の絶対ルール】
+・買うのは「同じ悩みを持つ人」。スペック紹介ではなく"どう生活が変わったか"を書く。
+・必ず具体的な数字を入れる（−○kg / ○分で / ○円 / ○週間使って など）。あいまい表現は使わない。
+・正直さが最大の武器。「ここは微妙だった」という小さなデメリットを1つ入れると信頼されて売れる。
+・「私も同じ悩みだった→この商品でこう変わった→あなたにも合うかも」の流れが基本。
+・押し売り・誇大表現はNG。特にダイエット・美容系は「絶対痩せる」「必ず効く」等の断定表現は薬機法的にNG。
+  「私の場合は」「個人の感想です」の立場を守り、効果の断定はしない。
+・セール/クーポン/送料無料/ポイントアップなど"今買う理由"があれば必ず入れる。`;
+
+// ===== Gemini 呼び出し =====
+async function gemini(prompt, asJson=false){
+  const key = (apiKey.value||LS.k).trim();
+  if(!key) throw new Error('Gemini APIキーが未設定です。上の「はじめに」で登録してください。');
+  const m = model.value || LS.model;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`;
+  const body = {
+    contents:[{parts:[{text:prompt}]}],
+    generationConfig: asJson ? {responseMimeType:"application/json", temperature:1.0} : {temperature:1.0}
+  };
+  const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!res.ok){
+    let msg = `エラー ${res.status}`;
+    try{ const e=await res.json(); msg += `：${e.error?.message||''}`; }catch(_){}
+    if(res.status===400) msg+='（APIキーが正しいか確認してください）';
+    if(res.status===429) msg+='（無料枠の上限に達した可能性。少し待つかモデルを変更）';
+    throw new Error(msg);
+  }
+  const data = await res.json();
+  const text = data?.candidates?.[0]?.content?.parts?.map(p=>p.text).join('')||'';
+  if(!text) throw new Error('応答が空でした。もう一度お試しください。');
+  return text;
+}
+async function testKey(){
+  keyMsg.innerHTML='<span class="muted">接続中...</span>';
+  try{
+    await gemini('「準備OK」とだけ返してください。');
+    let extra='';
+    const rid=(rakutenId.value||LS.rid).trim();
+    if(rid){
+      try{ await rakutenRanking(rid,'0'); extra=' 楽天ランキングもOK！'; }
+      catch(e){ extra=' （楽天アプリIDは接続できず：'+e.message+'）'; }
+    }
+    keyMsg.innerHTML='<span class="ok">✓ Gemini接続成功！'+extra+'</span>';
+  }
+  catch(e){ keyMsg.innerHTML='<span class="err">'+e.message+'</span>'; }
+}
+
+// ===== ローディング制御 =====
+function busy(btn,on,label){ btn.disabled=on;
+  if(on){ btn.dataset.t=btn.innerHTML; btn.innerHTML='<span class="spin"></span> '+(label||'生成中...'); }
+  else btn.innerHTML=btn.dataset.t; }
+function showErr(id,msg){ document.getElementById(id).innerHTML='<div class="err" style="margin-top:10px">'+msg+'</div>'; }
+function clearErr(id){ document.getElementById(id).innerHTML=''; }
+
+// ===== STEP1 リサーチ =====
+async function rakutenRanking(appId, genreId){
+  const url = `https://app.rakuten.co.jp/services/api/IchibaItemRanking/20220601?applicationId=${encodeURIComponent(appId)}&format=json`
+    + (genreId && genreId!=='0' ? `&genreId=${genreId}` : '');
+  const res = await fetch(url);
+  if(!res.ok){
+    if(res.status===400) throw new Error('楽天アプリIDが正しくない可能性があります');
+    if(res.status===429) throw new Error('楽天APIの回数制限。少し待って再試行してください');
+    throw new Error('楽天API エラー '+res.status);
+  }
+  const data = await res.json();
+  return (data.Items||[]).map(x=>x.Item);
+}
+async function doResearch(){
+  clearErr('rankErr'); busy(btnRank,true,'調査中...');
+  const list=document.getElementById('rankList');
+  try{
+    const rid=(rakutenId.value||LS.rid).trim();
+    if(rid){
+      const items = await rakutenRanking(rid, rGenre.value);
+      renderRealRanking(items.slice(0,15));
+      d1.textContent='✓ 本物のランキング取得';
+    }else{
+      await genTrendIdeas();
+      d1.textContent='✓ AIトレンド予想';
+    }
+  }catch(e){ showErr('rankErr',e.message); }
+  finally{ busy(btnRank,false); }
+}
+function renderRealRanking(items){
+  const list=document.getElementById('rankList'); list.innerHTML='';
+  if(!items.length){ list.innerHTML='<p class="muted">結果が取得できませんでした。</p>'; return; }
+  items.forEach(it=>{
+    const img=(it.mediumImageUrls&&it.mediumImageUrls[0]&&it.mediumImageUrls[0].imageUrl)||'';
+    const d=document.createElement('div'); d.className='item';
+    d.innerHTML=`${img?`<img src="${esc(img)}" alt="">`:''}
+      <div class="in">
+        <b>${it.rank}位｜${esc(it.itemName)}</b>
+        <span class="price">${Number(it.itemPrice).toLocaleString()}円</span>
+        <span class="shop">　${esc(it.shopName||'')}</span>
+        <div class="acts">
+          <button class="btn sm">✍️ この商品で作る</button>
+          <button class="btn sm ghost">📋 商品名コピー</button>
+          <a class="btn sm ghost" href="${esc(it.itemUrl)}" target="_blank" rel="noopener">商品ページ</a>
+        </div>
+      </div>`;
+    const bigImg = img ? img.replace(/_ex=\d+x\d+/,'_ex=800x800') : '';
+    const [bUse,bCopy]=d.querySelectorAll('button');
+    bUse.onclick=()=>useItem(it.itemName, Number(it.itemPrice).toLocaleString()+'円', bigImg);
+    bCopy.onclick=()=>{ navigator.clipboard.writeText(it.itemName); toast('商品名をコピーしました。ROOMアプリで検索！'); };
+    list.appendChild(d);
+  });
+}
+async function genTrendIdeas(){
+  const genreName = rGenre.options[rGenre.selectedIndex].text;
+  const today = new Date();
+  const prompt = `あなたは楽天ROOMで月5万円以上稼ぐアフィリエイトのプロです。
+今日は${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日。
+${profileText()}
+ジャンル「${genreName}」で、今の季節・時期に楽天市場で売れやすく、ROOM経由でも買われやすい「狙い目商品タイプ」を8個提案してください。
+${SELL_RULES}
+各項目: name(商品タイプ名。ROOMアプリでそのまま検索できる具体的なキーワード)、reason(今売れる理由を1行)、hook(投稿の切り口を1行)。日本語。
+JSON {"items":[{"name":"...","reason":"...","hook":"..."}]} のみ返す。`;
+  const data = JSON.parse(await gemini(prompt,true));
+  const list=document.getElementById('rankList'); list.innerHTML=
+    '<p class="muted">※ AIによる予想です。楽天アプリID（無料）を登録すると本物のランキングが見られます。</p>';
+  data.items.forEach(it=>{
+    const d=document.createElement('div'); d.className='idea';
+    d.innerHTML=`<b>${esc(it.name)}</b><span>📈 ${esc(it.reason)}<br>✍️ ${esc(it.hook)}</span>
+      <div class="acts" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn sm">✍️ この商品で作る</button>
+        <button class="btn sm ghost">📋 検索ワードコピー</button>
+      </div>`;
+    const [bUse,bCopy]=d.querySelectorAll('button');
+    bUse.onclick=(ev)=>{ ev.stopPropagation(); useItem(it.name,''); };
+    bCopy.onclick=(ev)=>{ ev.stopPropagation(); navigator.clipboard.writeText(it.name); toast('コピーしました。ROOMアプリで検索！'); };
+    list.appendChild(d);
+  });
+}
+function useItem(name, price, img){
+  cName.value=name; if(price) cPrice.value=price;
+  productImgUrl = img||null;
+  srcImage = null; // 前の商品の素材が残らないようリセット
+  document.getElementById('cName').scrollIntoView({behavior:'smooth',block:'center'});
+  if(img){
+    toast('商品画像を読み込み中...');
+    fetchImageB64(img).then(async b=>{
+      srcImage=b;
+      photo=await loadImg('data:'+b.mime+';base64,'+b.b64);
+      renderImage();
+      imgNote.textContent='背景: 本物の商品画像（「AIで作る」を押すとおしゃれに仕上げます）';
+      d3.textContent='✓ 商品写真セット';
+      toast('商品画像をセットしました（STEP3に表示中）');
+    }).catch(()=>toast('商品画像の読み込みに失敗しました'));
+  } else toast('投稿文づくりにセットしました');
+}
+
+// ===== 楽天アプリの共有テキスト読み取り =====
+function parseShare(text){
+  const m=text.match(/https?:\/\/item\.rakuten\.co\.jp\/([^\/\s]+)\/([^\/\s?]+)/);
+  const lines=text.split('\n').map(s=>s.trim())
+    .filter(s=>s && !s.startsWith('[楽天]') && !s.startsWith('#') && !/^https?:\/\//.test(s));
+  return { shop:m?m[1]:null, slug:m?m[2]:null, name:lines[0]||'' };
+}
+// 楽天商品API（itemCode指定・アプリIDがある場合）
+async function rakutenItemByCode(appId, code){
+  const url=`https://app.rakuten.co.jp/services/api/IchibaItemSearch/20220601?applicationId=${encodeURIComponent(appId)}&itemCode=${encodeURIComponent(code)}&format=json`;
+  const res=await fetch(url);
+  if(!res.ok) throw new Error('楽天API '+res.status);
+  const data=await res.json();
+  return data.Items && data.Items[0] && data.Items[0].Item;
+}
+// 商品ページから代表画像(og:image)を取得（アプリID不要のフォールバック）
+async function fetchOgImage(pageUrl){
+  const proxies=[
+    u=>'https://corsproxy.io/?url='+encodeURIComponent(u),
+    u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
+  ];
+  for(const px of proxies){
+    try{
+      const res=await fetch(px(pageUrl));
+      if(!res.ok) continue;
+      const html=await res.text();
+      const m=html.match(/property=["']og:image["'][^>]*content=["']([^"']+)["']/i)
+           || html.match(/content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+      if(m) return m[1];
+    }catch(_){}
+  }
+  return null;
+}
+// 共有テキスト → 商品名・価格・画像を読み取る（成功時 true=画像あり / false=画像なし）
+async function loadShareCore(){
+  const t=shareText.value.trim();
+  if(!t) throw new Error('楽天アプリの「共有」からコピーした文章を貼り付けてください');
+  const p=parseShare(t);
+  if(!p.name && !p.slug) throw new Error('商品名もURLも見つかりませんでした。共有テキストをそのまま貼ってください');
+  if(p.name) cName.value=p.name;
+  let imgUrl=null;
+  const rid=(rakutenId.value||LS.rid).trim();
+  // ① 楽天API（アプリIDあり）: 正式な商品名・価格・画像
+  if(p.shop && p.slug && rid){
+    try{
+      const it=await rakutenItemByCode(rid, p.shop+':'+p.slug);
+      if(it){
+        cName.value=it.itemName||cName.value;
+        if(it.itemPrice) cPrice.value=Number(it.itemPrice).toLocaleString()+'円';
+        const raw=(it.mediumImageUrls&&it.mediumImageUrls[0]&&it.mediumImageUrls[0].imageUrl)||'';
+        if(raw) imgUrl=raw.replace(/_ex=\d+x\d+/,'_ex=800x800');
+      }
+    }catch(_){}
+  }
+  // ② 商品ページのog:image（アプリID不要）
+  if(!imgUrl && p.shop && p.slug){
+    shareMsg.textContent='商品ページから画像を探しています...';
+    try{ imgUrl=await fetchOgImage(`https://item.rakuten.co.jp/${p.shop}/${p.slug}/`); }catch(_){}
+  }
+  if(imgUrl){
+    productImgUrl=imgUrl; srcImage=null;
+    shareMsg.textContent='商品画像を読み込み中...';
+    const b=await fetchImageB64(imgUrl);
+    srcImage=b;
+    photo=await loadImg('data:'+b.mime+';base64,'+b.b64);
+    renderImage();
+    imgNote.textContent='背景: 本物の商品画像（「AIで作る」を押すとおしゃれに仕上げます）';
+    d3.textContent='✓ 商品写真セット';
+  }
+  d2.textContent='✓ 商品セット';
+  return !!imgUrl;
+}
+// 読み取りだけ（Geminiキー不要）
+async function loadShare(){
+  clearErr('shareErr'); shareMsg.textContent='';
+  busy(btnShare,true,'読み取り中...');
+  try{
+    const gotImg = await loadShareCore();
+    shareMsg.innerHTML = gotImg
+      ? '<span class="ok">✓ 商品名と商品画像を読み取りました！STEP2で投稿文、STEP3で画像を作れます</span>'
+      : '商品名を読み取りました（画像は取得できませんでした。楽天アプリID（無料）を登録すると確実に取れます）';
+  }catch(e){ showErr('shareErr',e.message); }
+  finally{ busy(btnShare,false); }
+}
+// 全自動: 読み取り → 投稿文 ＋ 画像キャッチコピー
+async function autoCreate(){
+  clearErr('shareErr'); shareMsg.textContent='';
+  busy(btnAuto,true,'① 商品を読み取り中...');
+  try{
+    const gotImg = await loadShareCore();
+    const key=(apiKey.value||LS.k).trim();
+    if(!key){
+      shareMsg.textContent='商品は読み取りました。投稿文と画像コピーも自動で作るには、上の「はじめに」でGemini APIキー（無料）を登録してください。';
+      return;
+    }
+    btnAuto.innerHTML='<span class="spin"></span> ② 投稿文と画像コピーを生成中...';
+    shareMsg.textContent='投稿文と画像のキャッチコピーを生成中...';
+    await Promise.all([genCaption(), genImageCopy()]);
+    const capNG=document.getElementById('capErr').textContent.trim();
+    const imgNG=document.getElementById('imgErr').textContent.trim();
+    if(capNG||imgNG){
+      shareMsg.innerHTML='<span class="err">一部でエラーが出ました。下のSTEP2/STEP3のエラー表示を確認してください</span>';
+    }else{
+      d0.textContent='✓ 完成';
+      shareMsg.innerHTML='<span class="ok">✓ できあがり！STEP2の投稿文をコピー ＆ STEP3の画像を保存して、ROOMアプリで投稿してください'+(gotImg?'':'（画像は取得できなかったので写真アップロードか「AIで作る」を使ってください）')+'</span>';
+    }
+    document.getElementById('capOut').scrollIntoView({behavior:'smooth',block:'center'});
+  }catch(e){ showErr('shareErr',e.message); }
+  finally{ busy(btnAuto,false); }
+}
+
+// ===== STEP2 投稿文 =====
+async function genCaption(){
+  clearErr('capErr');
+  const name=cName.value.trim();
+  if(!name){ showErr('capErr','商品名を入れてください（STEP1の「この商品で作る」でも入ります）'); return; }
+  busy(btnCap,true);
+  try{
+    const prompt = `あなたは楽天ROOMで月5万円以上稼ぐトップルーマーです。次の商品の「オリジナルコメント（投稿文）」を日本語で書いてください。
+${profileText()}
+商品名: ${name}
+価格: ${cPrice.value||'不明'}
+実際に使った感想メモ: ${cReview.value.trim()||'（なし。ターゲットの悩みから自然な使用シーンを想定してよいが、嘘の効果・嘘の数値はねつ造しない）'}
+長さ: ${cLen.value}
+${SELL_RULES}
+【書式ルール（厳守）】
+・最初の3行は必ず「1行10文字以内」の短い行にする。1行目=誰向けか、2行目=商品のいちばんの特徴、3行目=推しポイント。各行に絵文字を1つ入れる。
+　例↓
+　産後ママへ🍼
+　夜だけ置き換え🌙
+　ラクして−1.2kg✨
+・「**」「##」「■」などの記号・markdown・太字は絶対に使わない（AIっぽく見えるため禁止）。強調したい時は絵文字か改行で。
+・4行目以降: 自分も同じ悩みだった共感 → 使ってどうだったか具体的に → 正直な注意点をひとつ。
+・本文の締めに「気になったら楽天市場で詳細をチェックしてみてね」という一文を自然に入れる。
+・いちばん最後にROOM用ハッシュタグを5個（#楽天ROOMに載せてます 等の定番＋商品ジャンルのタグ）。
+読みやすく適度に改行。投稿文のみ返す。`;
+    capOut.textContent = await gemini(prompt);
+    d2.textContent='✓ 作成ずみ';
+  }catch(e){ showErr('capErr',e.message); }
+  finally{ busy(btnCap,false); }
+}
+
+// ===== STEP3 画像 =====
+let photo=null;          // キャンバスに描く写真
+let productImgUrl=null;  // STEP1で選んだ商品の本物の画像URL
+let srcImage=null;       // AIに渡す素材画像 {mime, b64}
+const ITHEMES={
+  white:{frame:'#ffffff', ink:'#1f2330', accent:'#bf0000'},
+  cream:{frame:'#f6efe6', ink:'#4a3f35', accent:'#c96f4a'},
+  red:  {frame:'#bf0000', ink:'#ffffff', accent:'#ffd23f'},
+};
+function loadPhoto(e){
+  const f=e.target.files&&e.target.files[0]; if(!f) return;
+  const fr=new FileReader();
+  fr.onload=()=>{
+    srcImage={mime:f.type||'image/jpeg', b64:String(fr.result).split(',')[1]};
+    const img=new Image();
+    img.onload=()=>{ photo=img; renderImage(); d3.textContent='✓ 写真セット';
+      imgNote.textContent='背景: アップロード写真（「AIで作る」を押すとこの写真をおしゃれに仕上げます）'; };
+    img.src=String(fr.result);
+  };
+  fr.readAsDataURL(f);
+}
+function loadImg(src){ return new Promise((res,rej)=>{ const i=new Image(); i.crossOrigin='anonymous';
+  i.onload=()=>res(i); i.onerror=()=>rej(new Error('画像の取得に失敗しました。もう一度お試しください')); i.src=src; }); }
+
+// 商品画像URL → base64（楽天の画像サーバーはCORS不可のため無料プロキシ経由）
+async function fetchImageB64(url){
+  const prox='https://images.weserv.nl/?url='+encodeURIComponent(url.replace(/^https?:\/\//,''));
+  const res=await fetch(prox);
+  if(!res.ok) throw new Error('商品画像の取得に失敗しました（'+res.status+'）。写真をアップロードして試してください');
+  const blob=await res.blob();
+  const b64=await new Promise((ok,ng)=>{ const fr=new FileReader();
+    fr.onload=()=>ok(String(fr.result).split(',')[1]); fr.onerror=()=>ng(new Error('画像の変換に失敗')); fr.readAsDataURL(blob); });
+  return {mime:blob.type||'image/jpeg', b64};
+}
+
+// Gemini 画像生成（Nano Banana・無料枠）。image を渡すとその写真を素材に編集する
+async function geminiImage(prompt, image){
+  const key = (apiKey.value||LS.k).trim();
+  if(!key) throw new Error('Gemini APIキーが未設定です。上の「はじめに」で登録してください。');
+  const parts=[];
+  if(image) parts.push({inlineData:{mimeType:image.mime, data:image.b64}});
+  parts.push({text:prompt});
+  const models=['gemini-2.5-flash-image','gemini-2.5-flash-image-preview'];
+  let lastErr=null;
+  for(const m of models){
+    const url=`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`;
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts}]})});
+    if(res.status===404){ lastErr=new Error('画像生成モデルが見つかりません'); continue; }
+    if(!res.ok){
+      let msg=`画像生成エラー ${res.status}`;
+      try{ const e=await res.json(); msg+=`：${e.error?.message||''}`; }catch(_){}
+      if(res.status===429) msg+='（画像生成の無料枠上限かも。少し待ってから再試行してください）';
+      throw new Error(msg);
+    }
+    const data=await res.json();
+    const part=data?.candidates?.[0]?.content?.parts?.find(p=>p.inlineData);
+    if(!part) throw new Error('画像が生成されませんでした。プロンプトを少し変えてお試しください');
+    return 'data:'+(part.inlineData.mimeType||'image/png')+';base64,'+part.inlineData.data;
+  }
+  throw lastErr||new Error('画像生成に失敗しました');
+}
+
+// 「AIで作る」: 商品画像(STEP1選択 or アップロード写真)を素材に、正方形のオリジナル写真を作る
+async function genAIImage(){
+  clearErr('imgErr');
+  const name=cName.value.trim();
+  if(!name && !srcImage && !productImgUrl){
+    showErr('imgErr','先にSTEP1で商品を選ぶか、STEP2に商品名を入れてください'); return;
+  }
+  busy(btnAIImg,true,'素材を準備中...');
+  try{
+    // 素材画像を確保（アップロード写真 > STEP1の商品画像）
+    if(!srcImage && productImgUrl){
+      imgNote.textContent='商品画像を取得中...';
+      srcImage=await fetchImageB64(productImgUrl);
+    }
+    if(srcImage){
+      aiPrompt.value=`この商品写真の商品をそのまま主役にして、明るく清潔感のあるおしゃれな正方形の商品紹介写真に仕上げてください。白またはナチュラルなインテリアの背景に置き直し、自然光で映える構図に。商品の形・色・パッケージは絶対に変えないこと。文字・ロゴ・人物は追加しない。`;
+    }else{
+      // 素材がない場合: 商品名から見た目を推測して物撮り風に生成
+      const p=`楽天ROOMの商品紹介画像に使う写真を、AI画像生成で作るための指示文を日本語で書いてください。
+商品名: ${name}
+使った感想メモ: ${cReview.value.trim()||'なし'}
+要件: 商品名から商品の見た目を推測して具体的に描写。明るい自然光・清潔感・その商品が主役の物撮り。白やナチュラルな背景で映える構図。文字・ロゴ・人の顔は入れない。写真風でリアル。
+JSON {"prompt":"..."} のみ返す。`;
+      const data=JSON.parse(await gemini(p,true));
+      aiPrompt.value=data.prompt||'';
+    }
+    aiImgWrap.style.display='block'; aiImgWrap.open=true;
+    await drawAIImage();
+  }catch(e){ showErr('imgErr',e.message); imgNote.textContent=''; }
+  finally{ busy(btnAIImg,false); }
+}
+// 現在のプロンプト＋素材画像で生成（呼ぶたびに違うバリエーションが出る）
+async function drawAIImage(){
+  imgNote.textContent='AI画像を生成中...（10〜30秒かかることがあります）';
+  const p=(aiPrompt.value||'明るく清潔感のある商品写真').trim();
+  const src=await geminiImage(p+'\n※正方形の写真。画像内に文字・ロゴ・透かしは入れない。', srcImage);
+  photo=await loadImg(src);
+  renderImage();
+  document.getElementById('cv').scrollIntoView({behavior:'smooth',block:'center'});
+  imgNote.textContent= srcImage ? '✓ 商品画像をAIで仕上げました（Gemini・無料枠）' : '✓ AI生成画像（Gemini・無料枠）';
+  d3.textContent='✓ AI画像作成';
+}
+// プロンプトを直して作り直す（修正）
+async function redrawImage(){
+  clearErr('imgErr'); busy(btnRedraw,true,'生成中...');
+  try{ await drawAIImage(); }
+  catch(e){ showErr('imgErr',e.message); imgNote.textContent=''; }
+  finally{ busy(btnRedraw,false); }
+}
+// 全く別の雰囲気で作り直す
+async function genDifferentImage(){
+  clearErr('imgErr');
+  const name=cName.value.trim()||'商品';
+  busy(btnDiff,true,'別案を考え中...');
+  try{
+    const base = srcImage
+      ? '素材の商品写真はそのまま使う前提。「この商品写真の商品をそのまま主役にして…」の形で書く。商品の形・色・パッケージは変えない。'
+      : '商品名から見た目を推測して物撮り風に描写する。';
+    const prompt=`AI画像生成用の指示文を作り直してください。
+商品名: ${name}
+前回の指示文: ${aiPrompt.value||'なし'}
+前回とは全く違う構図・背景・雰囲気にすること（例: テーブルフォト→ライフスタイルシーン、白背景→ナチュラルな部屋、俯瞰→アップなど）。
+${base}
+要件: 日本語で書く。文字・ロゴ・人の顔は入れない。写真風でリアル。明るく清潔感。
+JSON {"prompt":"..."} のみ返す。`;
+    const data=JSON.parse(await gemini(prompt,true));
+    aiPrompt.value=data.prompt||aiPrompt.value;
+    await drawAIImage();
+  }catch(e){ showErr('imgErr',e.message); }
+  finally{ busy(btnDiff,false); }
+}
+function wrapL(ctx,text,maxW){ let line=''; const lines=[];
+  for(const ch of (text||'')){ if(ctx.measureText(line+ch).width>maxW){ lines.push(line); line=ch; } else line+=ch; }
+  if(line) lines.push(line); return lines; }
+function roundFill(ctx,x,y,w,h,r,fill){ ctx.beginPath();
+  if(ctx.roundRect) ctx.roundRect(x,y,w,h,r);
+  else{ ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+        ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  ctx.fillStyle=fill; ctx.fill(); }
+function renderImage(){
+  const cv=document.getElementById('cv'); if(!cv) return;
+  const w=cv.width, h=cv.height, ctx=cv.getContext('2d');
+  const th=ITHEMES[iTheme.value];
+  // フレーム
+  ctx.fillStyle=th.frame; ctx.fillRect(0,0,w,h);
+  // 写真エリア（中央・正方形寄り）
+  const m=w*0.06, topH=h*0.16, botH=h*0.14;
+  const px=m, py=topH, pw=w-m*2, ph=h-topH-botH;
+  if(photo){
+    const ir=photo.width/photo.height, cr=pw/ph; let sw,sh,sx,sy;
+    if(ir>cr){ sh=photo.height; sw=sh*cr; sx=(photo.width-sw)/2; sy=0; }
+    else{ sw=photo.width; sh=sw/cr; sx=0; sy=(photo.height-sh)/2; }
+    ctx.save(); ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(px,py,pw,ph,24); else ctx.rect(px,py,pw,ph);
+    ctx.clip(); ctx.drawImage(photo,sx,sy,sw,sh,px,py,pw,ph); ctx.restore();
+  }else{
+    roundFill(ctx,px,py,pw,ph,24, th.frame==='#ffffff'?'#f1f1f6':'rgba(255,255,255,.35)');
+    ctx.fillStyle=th.ink; ctx.globalAlpha=.5; ctx.textAlign='center';
+    ctx.font='500 40px sans-serif'; ctx.fillText('ここに商品写真', w/2, py+ph/2); ctx.globalAlpha=1;
+  }
+  // キャッチコピー（上）
+  ctx.textAlign='center'; ctx.fillStyle=th.ink;
+  const t=iTitle.value.trim();
+  if(t){
+    let fs=Math.round(w*0.062); ctx.font=`800 ${fs}px sans-serif`;
+    let lines=wrapL(ctx,t,w*0.86);
+    if(lines.length>2){ fs=Math.round(w*0.05); ctx.font=`800 ${fs}px sans-serif`; lines=wrapL(ctx,t,w*0.86); }
+    const y0=topH/2 - (lines.length-1)*fs*0.65 + fs*0.35;
+    lines.forEach((l,i)=>ctx.fillText(l,w/2,y0+i*fs*1.25));
+  }
+  // 価格バッジ（写真の右下に重ねる）
+  const pr=iPrice.value.trim();
+  if(pr){
+    ctx.font='800 44px sans-serif';
+    const tw=ctx.measureText(pr).width, bw=tw+64, bh=76;
+    const bx=px+pw-bw-20, by=py+ph-bh-20;
+    roundFill(ctx,bx,by,bw,bh,bh/2,th.accent);
+    ctx.fillStyle = th.accent==='#ffd23f' ? '#1f2330' : '#fff';
+    ctx.textBaseline='middle'; ctx.fillText(pr,bx+bw/2,by+bh/2+2); ctx.textBaseline='alphabetic';
+  }
+  // サブ（下）
+  const s=iSub.value.trim();
+  ctx.fillStyle=th.ink;
+  if(s){ ctx.font='600 38px sans-serif'; ctx.globalAlpha=.85;
+    ctx.fillText(s, w/2, h-botH/2); ctx.globalAlpha=1; }
+}
+async function genImageCopy(){
+  clearErr('imgErr');
+  const name=cName.value.trim()||iTitle.value.trim();
+  if(!name){ showErr('imgErr','先にSTEP2の商品名を入れてください'); return; }
+  busy(btnCopyAI,true);
+  try{
+    const prompt=`楽天ROOMのオリジナル画像に載せる短いコピーを作る。
+${profileText()}
+商品名: ${name}
+感想メモ: ${cReview.value.trim()||'なし'}
+${SELL_RULES}
+title(画像上部の大きいキャッチ。15字以内。数字か本音で目を引く。薬機法NG表現なし)、sub(画像下部の一言。15字以内)。
+JSON {"title":"...","sub":"..."} のみ返す。`;
+    const data=JSON.parse(await gemini(prompt,true));
+    iTitle.value=data.title||''; iSub.value=data.sub||'';
+    renderImage(); d3.textContent='✓ コピー作成';
+  }catch(e){ showErr('imgErr',e.message); }
+  finally{ busy(btnCopyAI,false); }
+}
+function downloadImage(){
+  const cv=document.getElementById('cv');
+  const a=document.createElement('a'); a.download=`room_${Date.now()}.png`; a.href=cv.toDataURL('image/png'); a.click();
+  toast('保存しました。ROOMアプリで投稿に添付してね');
+}
+
+// ===== STEP4 スケジュール =====
+let plan=[];
+function loadPlanFromStorage(){
+  plan = JSON.parse(lsGet('rr_plan')||'[]');
+  renderPlan();
+}
+function savePlan(){ lsSet('rr_plan', JSON.stringify(plan)); }
+async function genPlan(){
+  clearErr('planErr'); busy(btnPlan,true,'計画中...');
+  try{
+    const today=new Date();
+    const days=['日','月','火','水','木','金','土'];
+    const prompt=`あなたは楽天ROOMで月5万円以上稼ぐプロです。今日は${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日(${days[today.getDay()]}曜)。
+${profileText()}
+${SELL_RULES}
+今日から7日分の投稿計画を作ってください。ROOMは1日2〜3投稿がベスト。ただし忙しいママなので1日1つの「これだけやればOK」タスクに絞る。
+楽天のイベント（お買い物マラソン・5と0のつく日・ワンダフルデー等の傾向）や曜日・時間帯（ママは昼寝タイム13時台と夜21時台に見る）も考慮。
+各項目: day("7/3(木)"形式)、time(投稿におすすめの時刻)、genre(その日狙うジャンル)、idea(具体的に何をどんな切り口で投稿するか1行)、reason(なぜその日それが良いか1行)。
+JSON {"plan":[{"day":"...","time":"...","genre":"...","idea":"...","reason":"..."}]} のみ返す。必ず7個。`;
+    const data=JSON.parse(await gemini(prompt,true));
+    plan=data.plan.map(p=>({...p,done:false}));
+    savePlan(); renderPlan();
+    d4.textContent='✓ 7日分作成';
+  }catch(e){ showErr('planErr',e.message); }
+  finally{ busy(btnPlan,false); }
+}
+function renderPlan(){
+  const list=document.getElementById('planList'); list.innerHTML='';
+  document.getElementById('planBar').style.display = plan.length?'flex':'none';
+  plan.forEach((p,i)=>{
+    const d=document.createElement('div'); d.className='plan'+(p.done?' done':'');
+    d.innerHTML=`<input type="checkbox" ${p.done?'checked':''}>
+      <div class="in">
+        <span class="day">${esc(p.day)} ${esc(p.time)}</span>　<span class="muted">${esc(p.genre)}</span>
+        <div class="idea-t">${esc(p.idea)}</div>
+        <div class="why">💡 ${esc(p.reason)}</div>
+      </div>`;
+    d.querySelector('input').onchange=(e)=>{ plan[i].done=e.target.checked; savePlan(); renderPlan();
+      if(e.target.checked) toast('おつかれさま！🎉'); };
+    list.appendChild(d);
+  });
+  if(plan.length){
+    const doneN=plan.filter(p=>p.done).length;
+    const m=document.createElement('p'); m.className='muted';
+    m.textContent=`進捗: ${doneN} / ${plan.length} 完了`;
+    list.appendChild(m);
+  }
+}
+function clearPlan(){ if(confirm('今週の計画を消してもいい？')){ plan=[]; savePlan(); renderPlan(); } }
+
+// ===== ユーティリティ =====
+function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function copyText(id){ const t=document.getElementById(id).textContent; navigator.clipboard.writeText(t); toast('コピーしました'); }
+let toastT;
+function toast(msg){ clearTimeout(toastT);
+  let el=document.getElementById('toast');
+  if(!el){ el=document.createElement('div'); el.id='toast'; document.body.appendChild(el);
+    el.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1f2330;color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.25);transition:opacity .3s'; }
+  el.textContent=msg; el.style.opacity='1'; toastT=setTimeout(()=>el.style.opacity='0',1600);
+}
+loadAll();
+</script>
+</body>
+</html>
