@@ -830,10 +830,26 @@ JSON {"title":"...","sub":"..."} のみ返す。`;
   }catch(e){ showErr('imgErr',e.message); }
   finally{ busy(btnCopyAI,false); }
 }
-function downloadImage(){
+async function downloadImage(){
   const cv=document.getElementById('cv');
-  const a=document.createElement('a'); a.download=`room_${Date.now()}.png`; a.href=cv.toDataURL('image/png'); a.click();
-  toast('保存しました。ROOMアプリで投稿に添付してね');
+  const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
+  const file=new File([blob],`room_${Date.now()}.png`,{type:'image/png'});
+  if(navigator.share){
+    navigator.share({files:[file]})
+      .then(()=>toast('✓ 共有メニューが開きました。「写真に追加」またはROOMアプリを選んでください'))
+      .catch(e=>{ if(e.name!=='AbortError') _downloadFallback(blob); });
+  }else{
+    _downloadFallback(blob);
+  }
+}
+function _downloadFallback(blob){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.download=`room_${Date.now()}.png`;
+  a.href=url;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('画像をダウンロードしました');
 }
 
 // ===== STEP4 スケジュール =====
