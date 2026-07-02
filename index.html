@@ -617,12 +617,32 @@ ${SELL_RULES}
 ・いちばん最後にROOM用ハッシュタグを5個（#楽天ROOMに載せてます 等の定番＋商品ジャンルのタグ）。
 ・絶対に450文字以内。長すぎたら、冒頭フック＆ハッシュタグは絶対に残し、4行目以降の共感・具体的な話・注意点を短くする。
 読みやすく適度に改行。投稿文のみ返す。`;
-    const text = await gemini(prompt);
+    let text = await gemini(prompt);
+    let len = text.length;
+
+    // 450字超過時は自動修正
+    if(len > 450){
+      busy(btnCap,true,'文字数を調整中...');
+      const fixPrompt = `次の投稿文が${len}文字で450字を超えています。必ず450字以内に削除・短縮してください。冒頭フック＆ハッシュタグは絶対に残す。
+
+【元の投稿文】
+${text}
+
+【修正ルール】
+- 絶対に450文字以内
+- 冒頭の3行＆ハッシュタグは絶対に残す
+- 4行目以降の共感・具体的な話・注意点を短くする
+- 意味は変えない・本質は残す
+
+修正済みの投稿文のみ返す。`;
+      text = await gemini(fixPrompt);
+      len = text.length;
+    }
+
     capOut.textContent = text;
-    const len = text.length;
-    const countMsg = len > 450 ? '⚠️ 450文字超過（'+len+'文字）' : len+'文字・OK';
+    const countMsg = len > 450 ? '⚠️ エラー：'+len+'文字（修正失敗。再度お試しください）' : len+'文字・OK';
     const countEl = document.createElement('div');
-    countEl.style.cssText='margin-top:6px;font-size:12px;color:var(--sub);font-weight:700';
+    countEl.style.cssText='margin-top:6px;font-size:12px;'+(len>450?'color:#b91c1c;font-weight:700':'color:var(--sub);font-weight:700');
     countEl.textContent = countMsg;
     capOut.parentElement.insertBefore(countEl, capOut.nextElementSibling);
     d2.textContent='✓ 作成ずみ';
