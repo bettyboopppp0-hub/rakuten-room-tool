@@ -545,6 +545,7 @@ async function loadShareCore(){
     const b=await fetchImageB64(imgUrl);
     srcImage=b;
     photo=await loadImg('data:'+b.mime+';base64,'+b.b64);
+    aiDeco=false;
     renderImage();
     imgNote.textContent='背景: 本物の商品画像（「AIで作る」を押すとおしゃれに仕上げます）';
     d3.textContent='✓ 商品写真セット';
@@ -654,6 +655,7 @@ ${text}
 let photo=null;          // キャンバスに描く写真
 let productImgUrl=null;  // STEP1で選んだ商品の本物の画像URL
 let srcImage=null;       // AIに渡す素材画像 {mime, b64}
+let aiDeco=false;        // photo がAI加工済み画像（枠なしで全面表示する）
 const ITHEMES={
   white:{frame:'#ffffff', ink:'#1f2330', accent:'#bf0000'},
   cream:{frame:'#f6efe6', ink:'#4a3f35', accent:'#c96f4a'},
@@ -665,7 +667,7 @@ function loadPhoto(e){
   fr.onload=()=>{
     srcImage={mime:f.type||'image/jpeg', b64:String(fr.result).split(',')[1]};
     const img=new Image();
-    img.onload=()=>{ photo=img; renderImage(); d3.textContent='✓ 写真セット';
+    img.onload=()=>{ photo=img; aiDeco=false; renderImage(); d3.textContent='✓ 写真セット';
       imgNote.textContent='背景: アップロード写真（「AIで作る」を押すとこの写真をおしゃれに仕上げます）'; };
     img.src=String(fr.result);
   };
@@ -742,26 +744,27 @@ ${SELL_RULES}
 - features: 商品の推しポイント4個。各7字以内の短い言葉（例:「無添加」「日本製」「大容量でコスパ◎」「出産祝いに」）
 JSON {"catch":"...","sub":"...","features":["...","...","...","..."]} のみ返す。`,true));
       }catch(_){ /* 文言作りに失敗しても画像生成は続行 */ }
-      const feats=((deco&&deco.features)||[]).filter(Boolean).slice(0,4);
-      if(deco){
-        if(!iTitle.value.trim()) iTitle.value=deco.catch||'';
-        if(!iSub.value.trim()) iSub.value=deco.sub||'';
-      }
+      const feats=((deco&&deco.features)||[]).filter(Boolean).slice(0,3);
+      const catchTxt=((deco&&deco.catch)||'').trim();
+      const subTxt=((deco&&deco.sub)||'').trim();
       const badges=feats.length
-        ? `・商品のまわりの余白に、丸や吹き出し形の小さなバッジを${feats.length}個バランスよく配置し、中に次の文言をそのまま書く: ${feats.map(f=>`「${f}」`).join(' ')}
-・バッジ内の日本語は一字一句正確に。太く読みやすい字。バッジは白地や淡色地に濃い文字でコントラストを強く`
-        : '・商品のまわりの余白に、リボン・キラキラ・ドットなどの小さな飾りを上品に配置';
-      aiPrompt.value=`この商品写真の商品を主役に、楽天ROOMで人目を引く「加工済みの商品紹介画像」に仕上げてください。雑誌の通販ページや売れているROOM投稿のような、にぎやかだけど整理されたデザイン。
+        ? `商品のまわりに丸い吹き出し・星形・リボン形のバッジを${feats.length}個。中の文言は一字一句正確に: ${feats.map((f,i)=>`${i+1}個目「${f}」`).join(' / ')}。バッジごとに違うパステルカラー（ピンク・イエロー・ミント・ラベンダー）。バッジのふちは点線やスカラップ（波形）でかわいく。`
+        : `商品のまわりに星・ハート・リボン・キラキラの小さな飾りをにぎやかに散らす。`;
+      aiPrompt.value=`この商品写真を、楽天ROOMやSNSでバズっているママ向け商品紹介画像に加工してください。雑誌の付録紹介ページのような、カラフルでわくわくして思わず指が止まるデザイン。
 
-≪商品≫形・色・パッケージは絶対に変えない。中央に大きく、全体が見えるように。明るい照明で質感くっきり。
+【最重要・枠の禁止】画像の外周に白い枠・白いライン・白い余白は絶対に入れない。デザインは四辺の端までいっぱいに広げる。枠を使う場合は色付きのスカラップ（波形）・リボン帯・ガーランド（三角旗の飾り）だけ。
 
-≪背景・枠≫商品に合う淡いパステル1色の背景（例: クリーム・薄ピンク・薄水色）。外周に細いラインのかわいい飾り枠（角に小さな飾り）。
+【文字の字体】すべて「かわいい字体」で書く: 丸くてぽってりした太いポップ体、または温かみのある手書き風。事務的・機械的なゴシック体は禁止。文字には白フチ＋ふんわり影を付けて立体的に。大事な言葉は1文字ずつ色を変えたり少し傾けたりして楽しく。
+${catchTxt?`
+【タイトル】上部に一番大きく「${catchTxt}」。ぽってりしたかわいい文字で、この画像の主役級に目立たせる。`:''}
+【バッジ】${badges}
+${subTxt?`
+【下部】小さめの手書き風文字で「${subTxt}」。`:''}
+【背景】商品に合う淡いパステル（ピンク・クリーム・水色・ラベンダー）。無地ではなく薄い水玉・ストライプ・チェックなどの柄入り。紙吹雪・星・ハート・キラキラを散らしてお祭りみたいなわくわく感を出す。
 
-${badges}
+【商品】形・色・パッケージは絶対に変えない。中央に大きく、明るい照明でくっきり。
 
-≪禁止≫上記バッジ以外の文字・ロゴ・透かし・人物は入れない。商品をバッジで隠さない。ごちゃごちゃさせすぎず余白も残す。
-
-≪品質≫印刷物のようにくっきり高解像度。明るく清潔感があり、ママ向けにかわいく。`;
+【禁止】上記「 」の文言以外の文字・ロゴ・透かし・人物。白い枠。商品を飾りで隠すこと。`;
     }else{
       // 素材がない場合: 商品名から見た目を推測して、加工済みの紹介画像風に生成
       const p=`楽天ROOMで人目を引く「加工済みの商品紹介画像」をAIで作るための指示文を日本語で書いてください。雑誌の通販ページ風のデザイン。
@@ -771,9 +774,11 @@ ${badges}
 
 【指示文に必ず入れる要素】
 - 商品名から見た目（形・色・パッケージ）を推測して具体的に描写。商品が主役で中央に大きく、全体が見える
-- 商品に合う淡いパステル1色の背景＋外周に細いラインのかわいい飾り枠
-- 商品のまわりの余白に、推しポイントを書いた丸バッジを3〜4個（各7字以内の日本語。「 」で一字一句正確に指定。薬機法NG表現なし）
-- 明るい照明で質感くっきり・清潔感・印刷物のように高解像度
+- 商品に合う淡いパステルの柄入り背景（薄い水玉・ストライプなど）＋紙吹雪・星・ハート・キラキラでお祭りみたいなわくわく感
+- 白い枠・白い余白は禁止。デザインを四辺の端まで広げる。枠を使うなら色付きスカラップ（波形）やガーランド（三角旗）だけ
+- 商品のまわりに推しポイントを書いた吹き出し・星形バッジを3〜4個（各7字以内の日本語。「 」で一字一句正確に指定。薬機法NG表現なし）
+- 文字はすべて丸くてぽってりしたかわいいポップ体か手書き風。白フチ＋影で立体的に。事務的なゴシック体は禁止
+- 明るい照明で質感くっきり・印刷物のように高解像度
 - バッジ以外の文字・ロゴ・人物は入れない。商品をバッジで隠さない
 
 JSON {"prompt":"..."} のみ返す。`;
@@ -789,8 +794,9 @@ JSON {"prompt":"..."} のみ返す。`;
 async function drawAIImage(){
   imgNote.textContent='AI画像を生成中...（10〜30秒かかることがあります）';
   const p=(aiPrompt.value||'明るく清潔感のある商品写真').trim();
-  const src=await geminiImage(p+'\n※正方形。指示の「 」で指定した文言以外の文字・ロゴ・透かしは入れない。日本語の文字は誤字なく正確に書く。', srcImage);
+  const src=await geminiImage(p+'\n※正方形。指示の「 」で指定した文言以外の文字・ロゴ・透かしは入れない。日本語の文字は誤字なく正確に書く。画像の外周に白い枠・余白は作らず、端までデザインを広げる。', srcImage);
   photo=await loadImg(src);
+  aiDeco=true;
   renderImage();
   document.getElementById('cv').scrollIntoView({behavior:'smooth',block:'center'});
   imgNote.textContent= srcImage ? '✓ 商品画像をAIで仕上げました（Gemini・無料枠）' : '✓ AI生成画像（Gemini・無料枠）';
@@ -837,6 +843,30 @@ function renderImage(){
   const cv=document.getElementById('cv'); if(!cv) return;
   const w=cv.width, h=cv.height, ctx=cv.getContext('2d');
   const th=ITHEMES[iTheme.value];
+  // AI加工済み画像は白フレームを付けず全面表示（デザインは画像に焼き込み済み）
+  if(aiDeco && photo){
+    const ir=photo.width/photo.height, cr=w/h; let sw,sh,sx,sy;
+    if(ir>cr){ sh=photo.height; sw=sh*cr; sx=(photo.width-sw)/2; sy=0; }
+    else{ sw=photo.width; sh=sw/cr; sx=0; sy=(photo.height-sh)/2; }
+    ctx.drawImage(photo,sx,sy,sw,sh,0,0,w,h);
+    // 手入力があるときだけ白チップで重ねる
+    const chip=(txt,font,cy)=>{ ctx.font=font;
+      const fs=parseInt(font.match(/(\d+)px/)[1],10);
+      const tw=ctx.measureText(txt).width, bw=tw+56, bh=fs*1.9;
+      roundFill(ctx,(w-bw)/2,cy-bh/2,bw,bh,bh/2,'rgba(255,255,255,.92)');
+      ctx.fillStyle='#1f2330'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(txt,w/2,cy+2); ctx.textBaseline='alphabetic'; };
+    const t=iTitle.value.trim(); if(t) chip(t,'800 52px sans-serif',h*0.08);
+    const s2=iSub.value.trim(); if(s2) chip(s2,'600 36px sans-serif',h*0.94);
+    const pr2=iPrice.value.trim();
+    if(pr2){ ctx.font='800 44px sans-serif';
+      const tw=ctx.measureText(pr2).width, bw=tw+64, bh=76;
+      roundFill(ctx,w-bw-28,h-bh-28,bw,bh,bh/2,th.accent);
+      ctx.fillStyle= th.accent==='#ffd23f' ? '#1f2330' : '#fff';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(pr2,w-28-bw/2,h-28-bh/2+2); ctx.textBaseline='alphabetic'; }
+    return;
+  }
   // フレーム
   ctx.fillStyle=th.frame; ctx.fillRect(0,0,w,h);
   // 写真エリア（中央・正方形寄り）
