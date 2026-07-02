@@ -615,8 +615,16 @@ ${SELL_RULES}
 ・4行目以降: 自分も同じ悩みだった共感 → 使ってどうだったか具体的に → 正直な注意点をひとつ。
 ・本文の締めに「気になったら楽天市場で詳細をチェックしてみてね」という一文を自然に入れる。
 ・いちばん最後にROOM用ハッシュタグを5個（#楽天ROOMに載せてます 等の定番＋商品ジャンルのタグ）。
+・絶対に450文字以内。長すぎたら、冒頭フック＆ハッシュタグは絶対に残し、4行目以降の共感・具体的な話・注意点を短くする。
 読みやすく適度に改行。投稿文のみ返す。`;
-    capOut.textContent = await gemini(prompt);
+    const text = await gemini(prompt);
+    capOut.textContent = text;
+    const len = text.length;
+    const countMsg = len > 450 ? '⚠️ 450文字超過（'+len+'文字）' : len+'文字・OK';
+    const countEl = document.createElement('div');
+    countEl.style.cssText='margin-top:6px;font-size:12px;color:var(--sub);font-weight:700';
+    countEl.textContent = countMsg;
+    capOut.parentElement.insertBefore(countEl, capOut.nextElementSibling);
     d2.textContent='✓ 作成ずみ';
   }catch(e){ showErr('capErr',e.message); }
   finally{ busy(btnCap,false); }
